@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\VeiculosController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -32,3 +34,12 @@ Route::group(['prefix'=>'admin', 'as'=>'admin.'], function () {
 
     Route::get('/home', 'HomeController@index')->name('home');
 });
+
+/** Rotas Veiculos */
+Route::get('veiculos', 'VeiculosController@index')->name('veiculos.index');
+Route::get('veiculos/create', 'VeiculosController@create')->name('veiculos.create');
+Route::post('veiculos', 'VeiculosController@store')->name('veiculos.store');
+Route::get('veiculos/{veiculo}', 'VeiculosController@show')->name('veiculos.show');
+Route::get('veiculos/{veiculo}/veiculos', 'VeiculosController@edit')->name('veiculos.edit');
+Route::put('veiculos/{veiculo}', 'VeiculosController@update')->name('veiculos.update');
+Route::delete('veiculos/{veiculo}', 'VeiculosController@destroy')->name('veiculos.destroy');
