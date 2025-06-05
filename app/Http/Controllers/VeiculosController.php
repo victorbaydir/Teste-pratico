@@ -36,8 +36,9 @@ class VeiculosController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
+        
         return response(view('veiculos.veiculo_create'));
     }
 
@@ -48,7 +49,7 @@ class VeiculosController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
+    {   
         //Valida regex da PLACA e do ANO
         $validator = Veiculo::validate($request);
 
@@ -65,7 +66,7 @@ class VeiculosController extends Controller
             'modelo' => $request->modelo,
             'marca' => $request->marca,
             'ano' => $request->ano,
-            'proprietario' => 2
+            'proprietario' => $this->buscarProprietarioPorNome($request->proprietario)
         ]);
         return response(redirect()->back()->with('success', 'Veículo cadastrado com sucesso!'));
     }
@@ -78,8 +79,8 @@ class VeiculosController extends Controller
      */
     public function show($id)
     {
-        $veiculo = $this->veiculo->find($id);
-        return response(view('veiculos.veiculo_edit', compact('veiculo')));
+        // $veiculo = $this->veiculo->find($id);
+        // return response(view('veiculos.veiculo_edit', compact('veiculo')));
     }
 
     /**
@@ -129,8 +130,7 @@ class VeiculosController extends Controller
         return redirect()->back();
     }
 
-    public function buscarProprietario(Request $request) {
-        $proprietario = DB::select('select * from users where name ilike ?', [$request->nomeProprietario]);
-        dd($proprietario);
+    private static function buscarProprietarioPorNome(String $nome) {
+        return DB::select("select * from users where name ilike :nome", ['nome' => "$nome"]);
     }
 }

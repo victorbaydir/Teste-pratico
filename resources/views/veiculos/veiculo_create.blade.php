@@ -18,83 +18,100 @@
         @endif
         
     </div>
-    <form method="POST" action="{{ route('veiculos.store') }}">
+    <form method="POST" action="{{ route('veiculos.store') }}" class="input-group">
+    
         <input type="hidden" name="_token" value="{{ csrf_token() }}">
-        <div class="row">
-            <label for="placa" class="form-label mt-3">Placa</label>
-            <input type="text" name="placa" class="form-control">
-
-            <label for="renavam" class="form-label  mt-3">Renavam</label>
-            <input type="text" name="renavam" class="form-control">
-
+        <div class="row container-fluid">
+            <div class="col">
+                <label for="placa" class="form-label mt-3">Placa</label>
+                <input type="text" name="placa" class="form-control">
+            </div>
+            <div class="col">
+                <label for="renavam" class="form-label  mt-3">Renavam</label>
+                <input type="text" name="renavam" class="form-control">
+            </div>
+        </div>
+        <div class="row container-fluid ml-1">
             <label for="modelo" class="form-label  mt-3">Modelo</label>
             <input type="text" name="modelo" class="form-control">
+        </div>
+        <div class="row container-fluid">
+            
+            <div class="col">
+                <label for="marca" class="form-label  mt-3">Marca</label>
+                <input type="text" name="marca" class="form-control">
 
-            <label for="marca" class="form-label  mt-3">Marca</label>
-            <input type="text" name="marca" class="form-control">
-
-            <label for="ano" class="form-label  mt-3">Ano</label>
-            <input type="numeric" name="ano" class="form-control">
-
-            <label class="form-label  mt-3">Consultar Proprietário</label>
-            <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalProprietario">
-                Procurar Proprietário
-                </button>
-                </div>
-                <input type="text" class="form-control">
+                
+            </div>
+            <div class="col">
+                <label for="ano" class="form-label  mt-3">Ano</label>
+                <input type="numeric" name="ano" class="form-control">
             </div>
         </div>
-        <div class="row">
+        <div class="row container-fluid ml-1">
+            <label for="proprietario" class="form-label  mt-3">Proprietário</label>
+            <input type="text" name="proprietario" class="form-control">
+        </div>
+        
+        <div class="row container-fluid">
             <div class="text-center">
                 <a class="btn btn-primary mt-3" href="{{ route('veiculos.index') }}">VOLTAR</a>
-                <button class="btn btn-success mt-3">SALVAR</button>
+                <button type="submit" class="btn btn-success mt-3">SALVAR 2</button>
             </div>
         </div>
+
     </form>
 </div>
 
-<!-- MODAL PROPRIETARIO -->
-<div class="modal fade" id="modalProprietario" tabindex="-1" aria-labelledby="proprietarioModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="proprietarioModalLabel">Buscar Proprietário</h5>
-      </div>
-      <div class="modal-body">
-        <form action="{{ route('veiculos.proprietario') }}" method="post" class="d-flex">
-            @csrf
-            <input name="nomeProprietario" type="text" id="buscaProprietario" class="form-control" placeholder="Digite o nome do proprietário">
-            <button class="btn btn-primary ml-3">BUSCAR</button>
-        </form>
-        <table class="table text-center">
-            <thead>
-                <th>ID</th>
-                <th>NOME</th>
-                <th>OPÇÕES</th>
-            </thead>
-        </table>
 
+<script>
+    async function consultarProprietario() {
+    const url = 'http://127.0.0.1:8000/veiculos/proprietario?nomeProprietario=Administrador';
 
-        <!-- Formulário ou campo para buscar o proprietário -->
-        
-        <div id="resultadosBusca" class="mt-3">
-          <!-- Aqui você pode mostrar os resultados da busca via AJAX -->
-        </div>
+    // 1. Obter o token CSRF da meta tag
+    const csrfToken = 'aaslTnpP87GwI9Xv4oZaaYJIrS5nGfSap4aeURg2';
 
+    try {
+        console.log(1);
+        const response = await fetch(url, {
+            method: 'GET', // Usar GET, pois é uma consulta. Se fosse enviar dados, seria POST, PUT, etc.
+            headers: {
+                // 2. Incluir o token CSRF no cabeçalho X-CSRF-TOKEN
+                'X-CSRF-TOKEN': csrfToken,
+                'Content-Type': 'application/json', // Informa ao servidor que você está enviando JSON (se aplicável)
+                'Accept': 'application/json' // Informa ao servidor que você espera uma resposta JSON
+            },
+            // Se fosse uma requisição POST/PUT, você incluiria o corpo aqui:
+            // body: JSON.stringify({ seuDado: 'valor' })
+        });
+        console.log(2);
+        console.log(response);
 
+        if (!response.ok) {
+            console.log(3);
+            // Se a resposta não for OK (ex: 403 Forbidden, 419 Page Expired), lance um erro
+            throw new Error(`Response status: ${response.status} - ${response.statusText}`);
+        }
+        console.log(4);
 
+        const text = await response.text();
+        console.log('Resposta da API:', text);
 
+        if (text) {
+            const json = JSON.parse(text);
+            console.log(5, json);
+        } else {
+            console.log('Resposta vazia, não tem JSON');
+        }
+    } catch (error) {
+        console.log('API ERROR: ' + error);
+        // Adicionar tratamento para erros de rede ou de requisição
+        if (error instanceof TypeError && error.message === 'Failed to fetch') {
+            console.error('Erro de rede: Verifique a URL ou a conexão.');
+        }
+    }
+}
 
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-      </div>
-    </div>
-  </div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
+</script>
 
 @endsection

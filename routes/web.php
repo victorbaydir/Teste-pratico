@@ -43,4 +43,4 @@ Route::get('veiculos/{veiculo}', 'VeiculosController@show')->name('veiculos.show
 Route::get('veiculos/{veiculo}/veiculos', 'VeiculosController@edit')->name('veiculos.edit');
 Route::put('veiculos/{veiculo}', 'VeiculosController@update')->name('veiculos.update');
 Route::delete('veiculos/{veiculo}', 'VeiculosController@destroy')->name('veiculos.destroy');
-Route::post('veiculos/proprietario', 'VeiculosController@buscarProprietario')->name('veiculos.proprietario');
+// Route::post('veiculos/proprietario', 'VeiculosController@buscarProprietario')->name('veiculos.proprietario');
