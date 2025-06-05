@@ -4,6 +4,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use phpDocumentor\Reflection\Types\Boolean;
 
 class Veiculo extends Model
@@ -21,7 +23,16 @@ class Veiculo extends Model
         'proprietario'
     ];
 
-    public function validate() {
-        
+    public static function validate(Request $request) {
+        return Validator::make($request->all(), [
+        'placa' => ['required', 'regex:/^[A-Z]{3}[0-9]{4}$/'],
+        'ano' => ['required', 'digits:4', 'integer'],
+    ], [
+        'placa.required' => 'O campo PLACA é obrigatório.',
+        'placa.regex' => 'A placa deve ter o formato AAA1111.',
+        'ano.required' => 'O campo ANO é obrigatório.',
+        'ano.digits' => 'O campo ANO deve ter o formato 1111.',
+        'ano.integer' => 'O campo ANO suporta somente números.',
+    ]);
     }
 }

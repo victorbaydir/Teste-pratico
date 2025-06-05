@@ -4,9 +4,8 @@ namespace App\Http\Controllers;
 
 use App\User;
 use App\Veiculo;
+use DB;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
 
 class VeiculosController extends Controller
 {
@@ -50,6 +49,16 @@ class VeiculosController extends Controller
      */
     public function store(Request $request)
     {
+        //Valida regex da PLACA e do ANO
+        $validator = Veiculo::validate($request);
+
+        if ($validator->fails()) {
+        return response(
+            redirect()
+            ->back()
+            ->with('error', $validator->errors()->first())
+            ->withInput());
+    }
         $this->veiculo->create([
             'placa' => $request->placa,
             'renavam' => $request->renavam,
@@ -58,7 +67,7 @@ class VeiculosController extends Controller
             'ano' => $request->ano,
             'proprietario' => 2
         ]);
-        return redirect()->back();
+        return response(redirect()->back()->with('success', 'Veículo cadastrado com sucesso!'));
     }
 
     /**
@@ -69,7 +78,8 @@ class VeiculosController extends Controller
      */
     public function show($id)
     {
-        //
+        $veiculo = $this->veiculo->find($id);
+        return response(view('veiculos.veiculo_edit', compact('veiculo')));
     }
 
     /**
@@ -80,7 +90,8 @@ class VeiculosController extends Controller
      */
     public function edit($veiculo)
     {
-        return response(view('veiculos.veiculo_edit', ['veiculo' => $this->veiculo->find($veiculo)]));
+        $veiculo = $this->veiculo->find($veiculo);
+        return response(view('veiculos.veiculo_edit', compact('veiculo')));
     }
 
     /**
@@ -92,8 +103,17 @@ class VeiculosController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $validator = Veiculo::validate($request);
+
+        if ($validator->fails()) {
+        return response(
+            redirect()
+            ->back()
+            ->with('error', $validator->errors()->first())
+            ->withInput());
+    }
         $this->veiculo->where('id', $id)->update($request->except('_token', '_method'));
-        return redirect()->back();
+        return response(redirect()->back()->with('success', 'Veículo atualizado com sucesso!'));
     }
 
     /**
@@ -102,10 +122,15 @@ class VeiculosController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($veiculo)
+    public function destroy($id)
     {
-        $veiculo = $this->veiculo->findOrFail($veiculo);
+        $veiculo = $this->veiculo->find($id);
         $veiculo->delete();
         return redirect()->back();
+    }
+
+    public function buscarProprietario(Request $request) {
+        $proprietario = DB::select('select * from users where name ilike ?', [$request->nomeProprietario]);
+        dd($proprietario);
     }
 }

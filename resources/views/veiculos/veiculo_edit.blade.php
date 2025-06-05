@@ -4,7 +4,19 @@
 
 <div class="container">
     <div class="row">
-        <h1>Editar Veículo</h1>
+        <div class="col">
+            <h1>Editar Veículo</h1>
+        </div>
+        @if(session()->has('error'))
+            <div class="col text-center mt-3">
+                <p style="color:red">{{ session()->get('error') }}</p>
+            </div>
+        @elseif(session()->has('success'))
+            <div class="col text-center mt-3">
+                <p style="color:green">{{ session()->get('success') }}</p>
+            </div>
+        @endif
+        
     </div>
     <form method="POST" action="{{ route('veiculos.update', $veiculo) }}">
         @method('PUT')
