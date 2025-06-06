@@ -41,7 +41,6 @@ class VeiculosController extends Controller
      */
     public function create(Request $request)
     {
-        
         return response(view('veiculos.veiculo_create'));
     }
 
@@ -53,28 +52,20 @@ class VeiculosController extends Controller
      */
     public function store(Request $request)
     {   
-        $proprietario = $this->buscarProprietarioPorNome($request->proprietario)[0];
+        
         //Valida regex da PLACA e do ANO
         $validator = Veiculo::validate($request);
 
         if ($validator->fails()) {
-        return response(
-            redirect()
-            ->back()
-            ->with('error', $validator->errors()->first())
-            ->withInput());
-    }
-    // CRIA O REGISTRO NO BANCO DE DADOS
-        $this->veiculo->create([
-            'placa' => $request->placa,
-            'renavam' => $request->renavam,
-            'modelo' => $request->modelo,
-            'marca' => $request->marca,
-            'ano' => $request->ano,
-            'proprietario' => $proprietario->id
-        ]);
-        // REALIZA ENVIO DO EMAIL
-        Veiculo::enviarEmailCreate($proprietario);
+            return response(
+                redirect()
+                ->back()
+                ->with('error', $validator->errors()->first())
+                ->withInput());
+        }
+    
+        $this->cadastrar($request);
+        
         return response(redirect()->back()->with('success', 'Veículo cadastrado com sucesso!'));
     }
 
@@ -97,10 +88,11 @@ class VeiculosController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($veiculo)
+    public function edit($id)
     {
-        $veiculo = $this->veiculo->find($veiculo);
-        return response(view('veiculos.veiculo_edit', compact('veiculo')));
+        $veiculo = Veiculo::find($id);
+        $proprietario = User::find($veiculo->proprietario);
+        return response(view('veiculos.veiculo_edit', compact('veiculo', 'proprietario')));
     }
 
     /**
@@ -115,15 +107,13 @@ class VeiculosController extends Controller
         $validator = Veiculo::validate($request);
 
         if ($validator->fails()) {
-        return response(
-            redirect()
-            ->back()
-            ->with('error', $validator->errors()->first())
-            ->withInput());
-    }
-        $this->veiculo->where('id', $id)->update($request->except('_token', '_method'));
-        $proprietario = $this->buscarProprietarioPorNome($request->proprietario)[0];
-        Veiculo::enviarEmailUpdate($proprietario);
+            return response(
+                redirect()
+                ->back()
+                ->with('error', $validator->errors()->first())
+                ->withInput());
+        }
+        $this->atualizar($request, $id);
         return response(redirect()->back()->with('success', 'Veículo atualizado com sucesso!'));
     }
 
@@ -144,6 +134,29 @@ class VeiculosController extends Controller
         return DB::select("select * from users where name ilike :nome", ['nome' => "$nome"]);
     }
 
-    
+    public function cadastrar($request) {
+        $proprietario = $this->buscarProprietarioPorNome($request->proprietario)[0];
+
+        $this->veiculo->create([
+            'placa' => $request->placa,
+            'renavam' => $request->renavam,
+            'modelo' => $request->modelo,
+            'marca' => $request->marca,
+            'ano' => $request->ano,
+            'proprietario' => $proprietario->id
+        ]);
+
+        Veiculo::enviarEmailCreate($proprietario);
+    }
+
+    public function atualizar($request, $id) {
+        $this->veiculo
+            ->where('id', $id)
+            ->update($request->except('_token', '_method'));
+
+        $proprietario = $this->buscarProprietarioPorNome($request->proprietario)[0];
+
+        Veiculo::enviarEmailUpdate($proprietario);
+    }
 
 }

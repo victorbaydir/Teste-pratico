@@ -28,7 +28,7 @@
                         <td>{{ $veiculo->proprietario->name }}</td>
                         <td>
                             <div class="d-flex justify-content-center">
-                                @if(Auth::user()->role == 1)
+                                @if(Auth::user()->role == 2)
                                     <a href="{{ route('veiculos.edit',$veiculo) }}" class="btn btn-primary">EDITAR</a>
                                     <form method="post" action="{{ route('veiculos.destroy', $veiculo)}}">
                                         @method('delete')

@@ -56,7 +56,9 @@
         <div class="row container-fluid">
             <div class="text-center">
                 <a class="btn btn-primary mt-3" href="{{ route('veiculos.index') }}">VOLTAR</a>
-                <button type="submit" class="btn btn-success mt-3">SALVAR 2</button>
+                @if( Auth::user()->role == 2 )
+                <button type="submit" class="btn btn-success mt-3">SALVAR</button>
+                @endif
             </div>
         </div>
 
@@ -64,54 +66,5 @@
 </div>
 
 
-<script>
-    async function consultarProprietario() {
-    const url = 'http://127.0.0.1:8000/veiculos/proprietario?nomeProprietario=Administrador';
-
-    // 1. Obter o token CSRF da meta tag
-    const csrfToken = 'aaslTnpP87GwI9Xv4oZaaYJIrS5nGfSap4aeURg2';
-
-    try {
-        console.log(1);
-        const response = await fetch(url, {
-            method: 'GET', // Usar GET, pois é uma consulta. Se fosse enviar dados, seria POST, PUT, etc.
-            headers: {
-                // 2. Incluir o token CSRF no cabeçalho X-CSRF-TOKEN
-                'X-CSRF-TOKEN': csrfToken,
-                'Content-Type': 'application/json', // Informa ao servidor que você está enviando JSON (se aplicável)
-                'Accept': 'application/json' // Informa ao servidor que você espera uma resposta JSON
-            },
-            // Se fosse uma requisição POST/PUT, você incluiria o corpo aqui:
-            // body: JSON.stringify({ seuDado: 'valor' })
-        });
-        console.log(2);
-        console.log(response);
-
-        if (!response.ok) {
-            console.log(3);
-            // Se a resposta não for OK (ex: 403 Forbidden, 419 Page Expired), lance um erro
-            throw new Error(`Response status: ${response.status} - ${response.statusText}`);
-        }
-        console.log(4);
-
-        const text = await response.text();
-        console.log('Resposta da API:', text);
-
-        if (text) {
-            const json = JSON.parse(text);
-            console.log(5, json);
-        } else {
-            console.log('Resposta vazia, não tem JSON');
-        }
-    } catch (error) {
-        console.log('API ERROR: ' + error);
-        // Adicionar tratamento para erros de rede ou de requisição
-        if (error instanceof TypeError && error.message === 'Failed to fetch') {
-            console.error('Erro de rede: Verifique a URL ou a conexão.');
-        }
-    }
-}
-
-</script>
 
 @endsection
