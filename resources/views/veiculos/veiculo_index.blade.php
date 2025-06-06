@@ -28,7 +28,7 @@
                         <td>{{ $veiculo->proprietario->name }}</td>
                         <td>
                             <div class="d-flex justify-content-center">
-                                @if(Auth::user()->role == 2)
+                                @if(Auth::user()->role == 1)
                                     <a href="{{ route('veiculos.edit',$veiculo) }}" class="btn btn-primary">EDITAR</a>
                                     <form method="post" action="{{ route('veiculos.destroy', $veiculo)}}">
                                         @method('delete')
@@ -36,6 +36,9 @@
                                         <input type="hidden" name="_method" value="delete">
                                         <button class="btn btn-danger ml-3">EXCLUIR</button>
                                     </form>
+
+                                    @else
+                                    <a href="{{ route('veiculos.show',$veiculo) }}" class="btn btn-primary">MOSTRAR</a>
                                 @endif
                             </div>
                             

@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\CreateVeiculoMail;
 use App\User;
 use App\Veiculo;
 use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class VeiculosController extends Controller
 {
@@ -50,6 +53,7 @@ class VeiculosController extends Controller
      */
     public function store(Request $request)
     {   
+        $proprietario = $this->buscarProprietarioPorNome($request->proprietario)[0];
         //Valida regex da PLACA e do ANO
         $validator = Veiculo::validate($request);
 
@@ -60,14 +64,17 @@ class VeiculosController extends Controller
             ->with('error', $validator->errors()->first())
             ->withInput());
     }
+    // CRIA O REGISTRO NO BANCO DE DADOS
         $this->veiculo->create([
             'placa' => $request->placa,
             'renavam' => $request->renavam,
             'modelo' => $request->modelo,
             'marca' => $request->marca,
             'ano' => $request->ano,
-            'proprietario' => $this->buscarProprietarioPorNome($request->proprietario)
+            'proprietario' => $proprietario->id
         ]);
+        // REALIZA ENVIO DO EMAIL
+        Veiculo::enviarEmailCreate($proprietario);
         return response(redirect()->back()->with('success', 'Veículo cadastrado com sucesso!'));
     }
 
@@ -79,8 +86,9 @@ class VeiculosController extends Controller
      */
     public function show($id)
     {
-        // $veiculo = $this->veiculo->find($id);
-        // return response(view('veiculos.veiculo_edit', compact('veiculo')));
+        $veiculo = $this->veiculo->find($id);
+        $proprietario = User::find($veiculo->proprietario);
+        return response(view('veiculos.veiculo_show', compact('veiculo', 'proprietario')));
     }
 
     /**
@@ -114,6 +122,8 @@ class VeiculosController extends Controller
             ->withInput());
     }
         $this->veiculo->where('id', $id)->update($request->except('_token', '_method'));
+        $proprietario = $this->buscarProprietarioPorNome($request->proprietario)[0];
+        Veiculo::enviarEmailUpdate($proprietario);
         return response(redirect()->back()->with('success', 'Veículo atualizado com sucesso!'));
     }
 
@@ -133,4 +143,7 @@ class VeiculosController extends Controller
     private static function buscarProprietarioPorNome(String $nome) {
         return DB::select("select * from users where name ilike :nome", ['nome' => "$nome"]);
     }
+
+    
+
 }
