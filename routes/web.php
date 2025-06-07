@@ -37,10 +37,10 @@ Route::group(['prefix'=>'admin', 'as'=>'admin.'], function () {
 });
 
 /** Rotas Veiculos */
-Route::get('veiculos', 'VeiculosController@index')->name('veiculos.index');
-Route::get('veiculos/create', 'VeiculosController@create')->name('veiculos.create');
-Route::post('veiculos', 'VeiculosController@store')->name('veiculos.store');
-Route::get('veiculos/{veiculo}', 'VeiculosController@show')->name('veiculos.show');
-Route::get('veiculos/{veiculo}/veiculos', 'VeiculosController@edit')->name('veiculos.edit')->middleware(   'auth','permission.user');
-Route::put('veiculos/{veiculo}', 'VeiculosController@update')->name('veiculos.update');
-Route::delete('veiculos/{veiculo}', 'VeiculosController@destroy')->name('veiculos.destroy');
+Route::get('veiculos', 'VeiculosController@index')->name('veiculos.index')->middleware(   'auth');
+Route::get('veiculos/create', 'VeiculosController@create')->name('veiculos.create')->middleware(   'auth','permission.admin');
+Route::post('veiculos', 'VeiculosController@store')->name('veiculos.store')->middleware(   'auth','permission.admin');
+Route::get('veiculos/{veiculo}', 'VeiculosController@show')->name('veiculos.show')->middleware(   'auth');
+Route::get('veiculos/{veiculo}/veiculos', 'VeiculosController@edit')->name('veiculos.edit')->middleware(   'auth','permission.admin');
+Route::put('veiculos/{veiculo}', 'VeiculosController@update')->name('veiculos.update')->middleware(   'auth','permission.admin');
+Route::delete('veiculos/{veiculo}', 'VeiculosController@destroy')->name('veiculos.destroy')->middleware(   'auth','permission.admin');

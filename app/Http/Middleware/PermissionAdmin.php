@@ -20,7 +20,7 @@ class PermissionAdmin
     {
         if(Auth::user()->role != User::ROLE_ADMIN) {
 
-            return redirect( '/home');
+            return response()->view('unauthorized');
         }
 
         return $next($request);

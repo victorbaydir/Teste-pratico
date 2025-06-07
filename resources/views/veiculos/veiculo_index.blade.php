@@ -28,7 +28,7 @@
                         <td>{{ $veiculo->proprietario->name }}</td>
                         <td>
                             <div class="d-flex justify-content-center">
-                                @if(Auth::user()->role == 2)
+                                @roleadmin()
                                     <a href="{{ route('veiculos.edit',$veiculo) }}" class="btn btn-primary">EDITAR</a>
                                     <form method="post" action="{{ route('veiculos.destroy', $veiculo)}}">
                                         @method('delete')
@@ -39,7 +39,7 @@
 
                                     @else
                                     <a href="{{ route('veiculos.show',$veiculo) }}" class="btn btn-primary">MOSTRAR</a>
-                                @endif
+                                @endroleadmin
                             </div>
                             
                         </td>
@@ -48,9 +48,11 @@
             </tbody>
         </table>
     </div> 
+    @roleadmin()
     <div class="row mt-3">
         <a href="{{ route('veiculos.create') }}" class="btn btn-primary">NOVO</a>
     </div>
+    @endroleadmin
 </div>
 
 @endsection
