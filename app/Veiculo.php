@@ -4,7 +4,10 @@ namespace App;
 
 use App\Mail\CreateVeiculoMail;
 use App\Mail\UpdateVeiculoMail;
+use DB;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -44,6 +47,22 @@ class Veiculo extends Model
             'ano.digits' => 'O campo ANO deve ter o formato 1111.',
             'ano.integer' => 'O campo ANO suporta somente números.',
         ]);
+    }
+
+    public static function buscarProprietarioPorNome(String $nome) {
+        $resultado = DB::select("select * from users where name ilike :nome", ['nome' => "$nome"]);
+        if(!$resultado) {
+            throw ValidationException::withMessages(['nome'=>"Usuário não encontrado!"]);
+        }
+        return $resultado[0];
+    }
+
+    public static function buscarEmailProprietario(String $id) {
+        $resultado = DB::select("select email from users where id = :id", ['id' => $id]);
+        if(!$resultado) {
+            throw ValidationException::withMessages(['nome'=>"Usuário não encontrado!"]);
+        }
+        return $resultado[0];
     }
 
 }
