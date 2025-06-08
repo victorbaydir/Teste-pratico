@@ -38,4 +38,9 @@ class User extends Authenticatable
     {
         $this->notify(new MyResetPasswordNotification($token));
     }
+
+    public function proprietario()
+    {
+        return $this->belongsTo(User::class, 'proprietario');
+    }
 }

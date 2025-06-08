@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use Mail;
-use phpDocumentor\Reflection\Types\Boolean;
 
 class Veiculo extends Model
 {
@@ -26,7 +26,14 @@ class Veiculo extends Model
         'proprietario'
     ];
 
-    public static function validate(Request $request) {
+    public static function validate (Request $request) {
+        $validator = self::rules($request);
+        if ($validator->fails()) {
+            throw ValidationException::withMessages($validator->errors()->toArray());
+        }
+    }
+
+    public static function rules(Request $request) {
             return Validator::make($request->all(), [
             'placa' => ['required', 'regex:/^[A-Z]{3}[0-9]{4}$/'],
             'ano' => ['required', 'digits:4', 'integer'],
@@ -39,27 +46,4 @@ class Veiculo extends Model
         ]);
     }
 
-    public static function enviarEmailCreate($proprietario)
-    {
-        if($proprietario->email) {
-            $data = [
-                'subject'   => 'Novo veículo cadastrado',
-                'message'   => 'Um novo veículo foi adicionado ao sistema.'
-            ];
-        
-            Mail::to($proprietario->email)->send(new CreateVeiculoMail($data));
-        }
-    }
-
-    public static function enviarEmailUpdate($proprietario)
-    {
-        if($proprietario->email) {
-            $data = [
-                'subject'   => 'Veículo atualizado',
-                'message'   => 'Seu veículo foi atualizado.'
-            ];
-        
-            Mail::to($proprietario->email)->send(new UpdateVeiculoMail($data));
-        }
-    }
 }
