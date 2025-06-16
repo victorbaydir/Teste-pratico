@@ -7,6 +7,7 @@
 * Execute composer install
 * Renomeie o arquivo .env.example para .env
 * Configure o acesso do seu banco de dados postgree no arquivo .env
+* Configure o email no arquivo .env
 * Execute php artisan key:generate
 * Execute php artisan migrate
 * Execute php artisan db:seed
@@ -52,13 +53,13 @@ Existem dois tipos diferentes de usuários na aplicação:
 - Usuário
 
 ### Requisitos
-- [ ] Usar Laravel
-- [ ] Usar banco de dados Postgres
-- [ ] Utilizar Soft Deleting ao excluir veículos.
-- [ ] Não ter regra de negócio nos Controllers.
-- [ ] Usar Event e Notifications para enviar os e-mail.
-- [ ] Deixar informações no README.MD sobre como podemos executar sua aplicação.
-- [ ] Usar o github.
+- [X] Usar Laravel
+- [X] Usar banco de dados Postgres
+- [X] Utilizar Soft Deleting ao excluir veículos.
+- [X] Não ter regra de negócio nos Controllers.
+- [X] Usar Event e Notifications para enviar os e-mail.
+- [X] Deixar informações no README.MD sobre como podemos executar sua aplicação.
+- [X] Usar o github.
 
 ### Validações
 Os campos abaixo só podem ser aceitos no formato:
