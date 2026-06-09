@@ -2,7 +2,7 @@
 
 
 # Teste prático - Federal Soluções Técnicas
-
+Sitema de cadastro de veículos com autenticação de usuário, validação de permissão utilizando laravel, php, blade e postgres
 ## Instalação 
 * Execute composer install
 * Renomeie o arquivo .env.example para .env
